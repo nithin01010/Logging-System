@@ -1,0 +1,10 @@
+fastapi
+strawberry-graphql
+motor
+pydantic
+pydantic-settings
+uvicorn
+python-dotenv
+passlib[bcrypt]
+itsdangerous
+python-multipart

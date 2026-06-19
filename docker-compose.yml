@@ -1,0 +1,23 @@
+verion: '3.0'
+
+services:
+  mongodb:
+    image: mongo:6.0
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_date:/data/db
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+    environment:
+      - MONGO_URI=mongodb://mongodb:27017
+      - SECRET_KEY=keeeeeeeeeey
+    depends_on:
+      - mongodb
+    command: uvicorn app.main:app --reload
+volumes:
+  mongodb_data:
