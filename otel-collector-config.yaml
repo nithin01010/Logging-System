@@ -1,0 +1,21 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+
+processors:
+  batch:
+
+exporters:
+  http:
+    endpoint: "http://backend:8000/spans/batch"
+    headers:
+      X-API-Key: "backend-otel-agent-key"
+
+service:
+  piplines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [http]

@@ -1,23 +1,50 @@
-verion: '3.0'
+version: '3.8'
 
 services:
   mongodb:
     image: mongo:6.0
+    container_name: mongodb
     ports:
       - "27017:27017"
     volumes:
-      - mongodb_date:/data/db
+      - mongodb_data:/data/db
+    networks:
+      - boutique-net
+
   backend:
     build: ./backend
+    container_name: logging-backend
     ports:
       - "8000:8000"
     volumes:
       - ./backend:/app
     environment:
-      - MONGO_URI=mongodb://mongodb:27017
+      - MONGO_URI=mongodb://mongodb:27017/observability
       - SECRET_KEY=keeeeeeeeeey
+      - ALGORITHM=HS256
+      - ACCESS_TOKEN_EXPIRE_MINUTES=3000
     depends_on:
       - mongodb
-    command: uvicorn app.main:app --reload
+    networks:
+      - boutique-net
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:latest
+    container_name: otel-collector
+    command: ["--config=/etc/otel-col/config.yaml"]
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otel-col/config.yaml
+    ports:
+      - "4317:4317"
+    depends_on:
+      - backend
+    networks:
+      - boutique-net
+
+networks:
+  boutique-net:
+    name: boutique-net
+
 volumes:
   mongodb_data:
