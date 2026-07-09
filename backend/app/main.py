@@ -1,14 +1,18 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
-
-from app.core.database import connect_to_mongo, close_mongo_connection, get_database
+from starlette.middleware.base import BaseHTTPMiddleware
+from app.core.database import connect_to_mongo, close_mongo_connection
+from app.core.database import get_database
 from app.api.auth import router as auth_router
+from app.core.middleware import logging_middleware
+from app.core.init_db import init_database
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await connect_to_mongo()
+    await init_database()
     print("Starting up service")
     yield
     await close_mongo_connection()
@@ -28,6 +32,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.add_middleware(BaseHTTPMiddleware, dispatch=logging_middleware)
 
 app.include_router(auth_router)
 

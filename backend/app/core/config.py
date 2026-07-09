@@ -7,6 +7,9 @@ class Settings(BaseSettings):
     SECRET_KEY: str
     ALGORITHM: str
     ACCESS_TOKEN_EXPIRE_MINUTES: int
+    ADMIN_NAME: str
+    ADMIN_EMAIL: str
+    ADMIN_PASSWORD: str
 
     class Config:
         env_file = ".env"

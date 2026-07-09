@@ -1,7 +1,7 @@
 fastapi
 strawberry-graphql
 motor
-pydantic
+pydantic[email]
 pydantic-settings
 uvicorn
 python-dotenv
