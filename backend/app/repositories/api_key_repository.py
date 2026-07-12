@@ -26,6 +26,7 @@ class ApiKeyRepository:
 
     async def delete(self, key_id: str) -> bool:
         res = await self.api_keys.update_one(
-            {"id": ObjectId(key_id), "is_active": False}
+            {"_id": ObjectId(key_id)},
+            {"$set": {"is_active": False}}
         )
         return res.modified_count > 0
