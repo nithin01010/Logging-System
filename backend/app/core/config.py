@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     ADMIN_NAME: str
     ADMIN_EMAIL: str
     ADMIN_PASSWORD: str
+    API_KEY_NAME: str
 
     class Config:
         env_file = ".env"
