@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   mongodb:
@@ -45,10 +45,22 @@ services:
       - backend
     networks:
       - boutique-net
+  log-shipper:
+    build: ./log_shipper
+    container_name: log-shipper
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - BACKEND_URL=http://backend:8000/logs/batch
+      - API_KEY=${API_KEY}
+    depends_on:
+      - backend
+    networks:
+      - boutique-net
 
 networks:
   boutique-net:
     name: boutique-net
 
-volumes:
-  mongodb_data:
+volumes: mongodb_data
