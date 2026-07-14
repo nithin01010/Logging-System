@@ -6,7 +6,7 @@ import requests
 import threading
 from queue import Queue, Empty
 from dotenv import load_dotenv
-from parser import normalize_log
+from log_parser import normalize_log
 
 load_dotenv()
 
