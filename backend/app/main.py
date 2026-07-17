@@ -9,6 +9,7 @@ from app.core.middleware import logging_middleware
 from app.core.init_db import init_database
 from app.api.keys import router as keys_router
 from app.api.logs import router as logs_router
+from app.api.spans import router as spans_router
 
 
 @asynccontextmanager
@@ -40,6 +41,7 @@ app.add_middleware(BaseHTTPMiddleware, dispatch=logging_middleware)
 app.include_router(auth_router)
 app.include_router(keys_router)
 app.include_router(logs_router)
+app.include_router(spans_router)
 
 
 @app.get("/health", tags=["Health"])

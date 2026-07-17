@@ -8,14 +8,14 @@ processors:
   batch:
 
 exporters:
-  http:
-    endpoint: "http://backend:8000/spans/batch"
+  otlphttp/backend:
+    endpoint: "http://backend:8000"
     headers:
       X-API-Key: "backend-otel-agent-key"
 
 service:
-  piplines:
+  pipelines:
     traces:
       receivers: [otlp]
       processors: [batch]
-      exporters: [http]
+      exporters: [otlphttp/backend]
