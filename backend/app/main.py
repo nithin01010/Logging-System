@@ -10,6 +10,9 @@ from app.core.init_db import init_database
 from app.api.keys import router as keys_router
 from app.api.logs import router as logs_router
 from app.api.spans import router as spans_router
+from strawberry.fastapi import GraphQLRouter
+from app.graphql.schema import schema
+
 
 
 @asynccontextmanager
@@ -42,6 +45,9 @@ app.include_router(auth_router)
 app.include_router(keys_router)
 app.include_router(logs_router)
 app.include_router(spans_router)
+
+graphql_app = GraphQLRouter(schema)
+app.include_router(graphql_app, prefix="/graphql")
 
 
 @app.get("/health", tags=["Health"])
