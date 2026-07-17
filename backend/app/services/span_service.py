@@ -8,7 +8,7 @@ class SpanService:
     def __init__(self, repo: SpanRepository) -> None:
         self.repo = repo
 
-    async def ingest_span(self, batch: OtelSpanBatch) -> bool:
+    async def ingest_spans(self, batch: OtelSpanBatch) -> bool:
         spans = []
 
         for resource_span in batch.resourceSpans:
