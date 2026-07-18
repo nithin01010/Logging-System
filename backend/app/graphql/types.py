@@ -47,3 +47,14 @@ class AlertRuleType:
     threshold: float
     window_minutes: int
     service: str
+
+
+@strawberry.type
+class AlertTriggerType:
+    id: Optional[str]
+    rule_id: str
+    rule_name: str
+    triggered_at: datetime
+    actual_value: float
+    message: str
+

@@ -20,3 +20,11 @@ class SpanRepository:
         cursor = self.span_rep.find(query)
         res = await cursor.to_list(length=1000)
         return [SpanDocument(**r) for r in res]
+
+    async def get_spans_by_time(
+        self, service_name: str, start_time: datetime
+    ) -> List[SpanDocument]:
+        query = {"service_name": service_name, "start_time": {"$gte": start_time}}
+        cur = self.span_rep.find(query)
+        res = await cur.to_list()
+        return [SpanDocument(**r) for r in res]

@@ -65,3 +65,47 @@ async def resolve_services() -> List[str]:
     if db is None:
         return []
     return await db["logs"].distinct("service")
+
+
+from app.graphql.types import AlertRuleType, AlertTriggerType
+from app.repositories.alert_repository import AlertRepository
+from app.services.alert_service import AlertService
+
+
+def get_graphql_alert_service() -> AlertService:
+    db = get_database()
+    alert_repo = AlertRepository(db)
+    return AlertService(alert_repo, None, None)
+
+
+async def resolve_alert_rules() -> List[AlertRuleType]:
+    service = get_graphql_alert_service()
+    rules = await service.get_all_rules()
+    return [
+        AlertRuleType(
+            id=str(r.id) if r.id else "",
+            name=r.name,
+            service=r.service,
+            metric=r.metric,
+            threshold=r.threshold,
+            window_minutes=r.window_minutes,
+        )
+        for r in rules
+    ]
+
+
+async def resolve_alert_triggers() -> List[AlertTriggerType]:
+    service = get_graphql_alert_service()
+    triggers = await service.get_all_triggers()
+    return [
+        AlertTriggerType(
+            id=str(t.id) if t.id else None,
+            rule_id=str(t.rule_id),
+            rule_name=t.rule_name,
+            triggered_at=t.triggered_at,
+            actual_value=t.actual_value,
+            message=t.message,
+        )
+        for t in triggers
+    ]
+

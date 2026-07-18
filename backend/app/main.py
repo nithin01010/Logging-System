@@ -12,6 +12,9 @@ from app.api.logs import router as logs_router
 from app.api.spans import router as spans_router
 from strawberry.fastapi import GraphQLRouter
 from app.graphql.schema import schema
+from app.api.alerts import router as alerts_router
+from app.api.alerts import get_alert_service
+from app.workers.alert_worker import start_alert_worker, stop_alert_worker
 
 
 
@@ -19,8 +22,11 @@ from app.graphql.schema import schema
 async def lifespan(app: FastAPI):
     await connect_to_mongo()
     await init_database()
+    alert_service = get_alert_service()
+    start_alert_worker(alert_service)
     print("Starting up service")
     yield
+    stop_alert_worker()
     await close_mongo_connection()
     print("Shutting down service")
 
@@ -45,6 +51,7 @@ app.include_router(auth_router)
 app.include_router(keys_router)
 app.include_router(logs_router)
 app.include_router(spans_router)
+app.include_router(alerts_router)
 
 graphql_app = GraphQLRouter(schema)
 app.include_router(graphql_app, prefix="/graphql")
