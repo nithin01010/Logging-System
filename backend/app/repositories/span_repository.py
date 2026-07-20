@@ -1,6 +1,7 @@
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from app.models.span import SpanDocument
 from typing import List
+from datetime import datetime
 
 
 class SpanRepository:
