@@ -29,11 +29,14 @@ class LogRepository:
             if filters.end_time:
                 query["timestamp"]["$lte"] = filters.end_time
 
+        projection = None if filters.include_raw else {"raw": 0}
+
         cursor = (
-            self.logs_data.find(query)
+            self.logs_data.find(query, projection)
             .sort("timestamp", -1)
             .skip(filters.skip)
             .limit(filters.limit)
         )
+
         res = await cursor.to_list(length=filters.limit)
         return [LogEntry(**r) for r in res]

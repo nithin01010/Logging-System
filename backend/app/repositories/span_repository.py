@@ -29,3 +29,8 @@ class SpanRepository:
         cur = self.span_rep.find(query)
         res = await cur.to_list()
         return [SpanDocument(**r) for r in res]
+
+    async def get_recent_trace_ids(self, limit: int = 20) -> List[str]:
+        distinct_traces = await self.span_rep.distinct("trace_id")
+        return distinct_traces[-limit:]
+

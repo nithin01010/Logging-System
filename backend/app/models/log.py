@@ -31,3 +31,5 @@ class LogFilter(BaseModel):
     end_time: Optional[datetime] = None
     limit: int = 100
     skip: int = 0
+    include_raw: bool = False
+

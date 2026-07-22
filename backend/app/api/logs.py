@@ -38,10 +38,12 @@ async def get_logs(
     level: Optional[str] = Query(None),
     start_time: Optional[datetime] = Query(None),
     end_time: Optional[datetime] = Query(None),
-    limit: int = Query(100, ge=1, le=1000),
-    skip: int = Query(0, ge=0),
+    page: int = Query(1, ge=1),
+    limit: int = Query(50, ge=1, le=1000),
+    include_raw: bool = Query(False),
     log_service: LogService = Depends(get_log_service),
 ):
+    skip = (page - 1) * limit
     filters = LogFilter(
         service=service,
         level=level,
@@ -49,5 +51,7 @@ async def get_logs(
         end_time=end_time,
         limit=limit,
         skip=skip,
+        include_raw=include_raw,
     )
     return await log_service.query_logs(filters)
+

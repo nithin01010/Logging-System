@@ -69,3 +69,7 @@ class SpanService:
             else:
                 root = node
         return root
+
+    async def get_recent_trace_ids(self, limit: int = 20) -> List[str]:
+        return await self.repo.get_recent_trace_ids(limit)
+

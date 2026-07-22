@@ -17,7 +17,6 @@ from app.api.alerts import get_alert_service
 from app.workers.alert_worker import start_alert_worker, stop_alert_worker
 
 
-
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await connect_to_mongo()
@@ -36,16 +35,24 @@ app = FastAPI(
     description="The logging system is built with Graphql along with Next js",
     lifespan=lifespan,
 )
-
+origins = ["http://localhost:3000", "http://127.0.0.1:3000"]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+from fastapi.middleware.gzip import GZipMiddleware
+
+app.add_middleware(
+    GZipMiddleware,
+    minimum_size=1000
+)
+
 app.add_middleware(BaseHTTPMiddleware, dispatch=logging_middleware)
+
 
 app.include_router(auth_router)
 app.include_router(keys_router)

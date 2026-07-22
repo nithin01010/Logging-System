@@ -29,9 +29,25 @@ async def ingest_spans(
     return {"message": "spans ingested"}
 
 
+from app.core.cache import memory_cache
+
+
+@router.get("/traces", response_model=list[str])
+async def get_recent_traces(service: SpanService = Depends(get_span_service)):
+    cached = memory_cache.get("recent_traces")
+    if cached is not None:
+        return cached
+
+    traces = await service.get_recent_trace_ids()
+    memory_cache.set("recent_traces", traces, ttl=15)
+    return traces
+
+
+
 @router.get("/traces/{trace_id}", response_model=Optional[TraceNode])
 async def get_trace(trace_id: str, service: SpanService = Depends(get_span_service)):
     trace = await service.get_trace_tree(trace_id)
     if not trace:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Trace not found")
     return trace
+

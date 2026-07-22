@@ -50,12 +50,16 @@ def normalize_log(container_name: str, raw_line: str) -> dict:
             pass
 
     # Extract trace and span context
-    trace_id = data.get("traceId") or data.get("trace_id") or data.get("logging.googleapis.com/trace")
-    span_id = data.get("spanId") or data.get("span_id") or data.get("logging.googleapis.com/spanId")
+    raw_trace_id = data.get("traceId") or data.get("trace_id") or data.get("logging.googleapis.com/trace")
+    raw_span_id = data.get("spanId") or data.get("span_id") or data.get("logging.googleapis.com/spanId")
+
+    trace_id = str(raw_trace_id) if raw_trace_id and not str(raw_trace_id).startswith("${") else None
+    span_id = str(raw_span_id) if raw_span_id and not str(raw_span_id).startswith("${") else None
 
     # Clean path prefix from GCP trace IDs if present
-    if trace_id and "/" in str(trace_id):
-        trace_id = str(trace_id).split("/")[-1]
+    if trace_id and "/" in trace_id:
+        trace_id = trace_id.split("/")[-1]
+
 
     return {
         "service": container_name,
